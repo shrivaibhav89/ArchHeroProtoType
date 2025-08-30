@@ -10,8 +10,10 @@ public class WeaponProperties : ScriptableObject
     public float fireRate;
     public int magazineSize;
     public float reloadTime;
+    public float projectileSpeed;
+    public AudioClip fireSound;
     public GameObject projectilePrefab;
-    public ParticleSystem muzzleFlash;
-    public ParticleSystem projectileBlastFX;
+    public GameObject muzzleFlash;
+    public GameObject projectileBlastFX;
 }
 

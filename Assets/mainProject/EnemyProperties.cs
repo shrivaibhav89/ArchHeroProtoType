@@ -8,4 +8,5 @@ public class EnemyProperties : ScriptableObject
     public float maxHealth = 20f;
     public float damage = 5f;
     public float speed = 2f;
+    public float attackRange = 1.5f;
 }

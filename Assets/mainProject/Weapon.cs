@@ -5,31 +5,43 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
     public WeaponProperties weaponProperties;
-    public int currentBullets;
+    private int currentBullets;
     public bool isReloading = false;
     private float nextTimeToFire = 0f;
-   [SerializeField] private Transform firepoint;
+    [SerializeField] private Transform firepoint;
+    Vector3 targetDirection;
 
-    
 
-    public void Fire()
+    public void Fire(Transform target)
     {
         if (isReloading) return;
 
         if (Time.time < nextTimeToFire) return;
+       
         nextTimeToFire = Time.time + 1f / weaponProperties.fireRate;
         Projectile projectile = ProjectilePool.Instance.GetProjectile(weaponProperties.projectilePrefab, firepoint.position, firepoint.rotation);
+        targetDirection = (target.position - firepoint.position).normalized;
 
-        projectile.Launch(firepoint.forward, weaponProperties);
-        if (currentBullets > 0)
+        projectile.Launch(targetDirection, weaponProperties);
+        Debug.Log("Weapon Fired! Damage: " + weaponProperties.damage);
+        currentBullets--;
+        if (currentBullets <= 0)
         {
-            Debug.Log("Weapon Fired! Damage: " + weaponProperties.damage);
-            currentBullets--;
+            currentBullets = 0;
+            StartCoroutine(Reload());
         }
-        else
-        {
-            Debug.Log("Out of bullets!");
-        }
+        EventManager.TriggerEvent(UIEvent.OnAmmoChanged, currentBullets);
+    }
+
+    private IEnumerator Reload()
+    {
+        EventManager.TriggerEvent(GameEvent.OnWeaponReload, weaponProperties.reloadTime);
+        isReloading = true;
+        Debug.Log("Reloading...");
+        yield return new WaitForSeconds(weaponProperties.reloadTime);
+        currentBullets = weaponProperties.magazineSize;
+        isReloading = false;
+        EventManager.TriggerEvent(UIEvent.OnAmmoChanged, currentBullets);
     }
 
 }

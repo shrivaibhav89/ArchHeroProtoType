@@ -8,10 +8,15 @@ public class EnemyManager : MonoBehaviour
     // Dictionary to hold pools for each enemy prefab
     private Dictionary<GameObject, Queue<Enemy>> poolDictionary = new();
     private List<Enemy> activeEnemies = new();
+    private Transform playerTransform;
     void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+    }
+    void Start()
+    {
+        playerTransform = GameObject.FindWithTag("Player").transform;
     }
 
     // Get an enemy from the pool or instantiate if needed
@@ -63,6 +68,19 @@ public class EnemyManager : MonoBehaviour
             poolDictionary[enemy.prefabRef] = new Queue<Enemy>();
         poolDictionary[enemy.prefabRef].Enqueue(enemy);
         activeEnemies.Remove(enemy);
+    }
+
+    void FixedUpdate()
+    {
+        foreach (var enemy in activeEnemies)
+        {
+            if (enemy.Health >= 0 && enemy.gameObject.activeInHierarchy)
+            {
+                enemy.MoveTowardTarget(playerTransform, Time.fixedDeltaTime);
+            }
+
+            // Implement enemy behavior updates here
+        }
     }
 }
 

@@ -6,27 +6,29 @@ public class Projectile : MonoBehaviour
 {
     [HideInInspector]
     public GameObject prefabRef; // store prefab reference (set when spawned)
-
-    private float lifeTime = 5f;
     private float timer;
-    [SerializeField] private float speed = 20f;
     private Vector3 velocity;
-    private float damage;
+    private WeaponProperties weaponProperties;
+    private Rigidbody rigidbody;
+    void Awake()
+    {
+        rigidbody = GetComponent<Rigidbody>();
+    }
 
     public void Launch(Vector3 direction, WeaponProperties weaponProperties)
     {
-        velocity = direction.normalized * speed;
+        velocity = direction.normalized ;
         timer = 0f;
         ProjectileManager.Instance.Register(this);
         Debug.LogError("Projectile launched");
-        damage = weaponProperties.damage;
+        this.weaponProperties = weaponProperties;
     }
 
     public void MoveAndTick(float deltaTime)
     {
-        transform.position += velocity * deltaTime;
+        rigidbody.position += (velocity ) * (weaponProperties.projectileSpeed * Time.deltaTime); 
         timer += deltaTime;
-        if (timer >= lifeTime)
+        if (timer >= 5f)
             Despawn();
     }
 
@@ -43,10 +45,14 @@ public class Projectile : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         Debug.Log("Projectile hit: " + other.name);
+
         if (other.CompareTag("Enemy"))
         {
+            BlastFx blastfx = BlastFXPoolManager.Instance.GetBlastFX(weaponProperties.projectileBlastFX);
+            blastfx.transform.position = transform.position;
+            blastfx.gameObject.SetActive(true);
             Despawn();
-            other.gameObject.GetComponent<Enemy>().TakeDamage(damage);
+            other.gameObject.GetComponent<Enemy>().TakeDamage(weaponProperties.damage);
         }
     }
 

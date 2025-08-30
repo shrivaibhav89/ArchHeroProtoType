@@ -16,6 +16,12 @@ MonoBehaviour:
   range: 10
   fireRate: 1
   magazineSize: 10
-  reloadTime: 3
+  reloadTime: 5
+  projectileSpeed: 10
+  fireSound: {fileID: 0}
   projectilePrefab: {fileID: 6928244475505141068, guid: ffde7c0f15af4b243acc6be6ca10b642,
+    type: 3}
+  muzzleFlash: {fileID: 1232470965182556, guid: c7889a59d58ece34eb095079be665d85,
+    type: 3}
+  projectileBlastFX: {fileID: 8554059995759366479, guid: 91acb7b7018f63d4a8491ed22d25e0ec,
     type: 3}

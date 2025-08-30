@@ -14,7 +14,15 @@ public class ProjectileManager : MonoBehaviour
 
     void Update()
     {
-        float dt = Time.deltaTime;
+        // float dt = Time.deltaTime;
+        // for (int i = activeProjectiles.Count - 1; i >= 0; i--)
+        // {
+        //     activeProjectiles[i].MoveAndTick(dt);
+        // }
+    }
+    void FixedUpdate()
+    {
+        float dt = Time.fixedDeltaTime;
         for (int i = activeProjectiles.Count - 1; i >= 0; i--)
         {
             activeProjectiles[i].MoveAndTick(dt);
