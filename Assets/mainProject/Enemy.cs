@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
@@ -9,13 +10,13 @@ public class Enemy : MonoBehaviour
 
     public float Health { get { return health; } }
 
-    private Rigidbody rb;
+    private NavMeshAgent nvm;
     private enum EnemyState {Chasing, Attacking }
     private EnemyState currentState;
 
     void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        nvm = GetComponent<NavMeshAgent>();
         currentState = EnemyState.Chasing;
     }
 
@@ -23,6 +24,8 @@ public class Enemy : MonoBehaviour
     void OnEnable()
     {
         health = enemyProperties.maxHealth;
+        nvm.speed = enemyProperties.speed;
+        nvm.stoppingDistance = enemyProperties.attackRange;
     }
     public void Despawn()
     {
@@ -63,7 +66,6 @@ public class Enemy : MonoBehaviour
             // Implement attack logic here (e.g., reduce player health)
             return; // Skip movement when attacking
         }
-        Vector3 direction = (target.position - transform.position).normalized;
-        rb.position += direction * enemyProperties.speed * deltaTime;
+        nvm.SetDestination(target.position);
     }
 }
